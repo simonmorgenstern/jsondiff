@@ -1,14 +1,16 @@
-const object1 = require('./obj1.json');
+const object1 = require('./base.json');
 const object2 = require('./obj2.json');
 const fs = require('fs');
 
-function compareObjects(obj1, obj2) {
+function compareObjects(base,newObject) {
     const diffs = {};
-    for (let key in obj1) {
-        compare(obj1[key], obj2[key], key, diffs);
+    // calls the compare method for every key of the current level to get all changes and deleted keys
+    for (let key in base) {
+        compare(base[key],newObject[key], key, diffs);
     }
-    for (let key in obj2) {
-        if (!obj1[key]) {
+    // iterates over the new object to check for added keys
+    for (let key in newObject) {
+        if (!base[key]) {
             diffs[key] = "added";
         }
     }
@@ -16,10 +18,12 @@ function compareObjects(obj1, obj2) {
 }
 
 function compare(item1, item2, key, diffs) {
+    // if the key does not exist in the newObject it was deleted
     if (item2 === undefined) {
         diffs[key] = "deleted";
         return;
     }
+    // if the current item is a object it recursively tests the nested object for differences
     if (typeof item1 === "object") {
         const objDiff = compareObjects(item1, item2);
         if (Object.keys(objDiff).length > 0) {
@@ -27,15 +31,12 @@ function compare(item1, item2, key, diffs) {
         }
         return;
     } else {
+        // if the content of the item has changed it will show what the new value is
         if (item1 !== item2) {
             diffs[key] = item2;
         }
     }
 }
-
-process.argv.forEach((val, index) => {
-    console.log(`${index}: ${val}`)
-})
 
 const d = compareObjects(object1, object2, {});
 
