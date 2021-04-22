@@ -1,4 +1,4 @@
-const object1 = require('./base.json');
+const object1 = require('./obj1.json');
 const object2 = require('./obj2.json');
 const fs = require('fs');
 
@@ -33,7 +33,7 @@ function compare(item1, item2, key, diffs) {
     } else {
         // if the content of the item has changed it will show what the new value is
         if (item1 !== item2) {
-            diffs[key] = item2;
+            diffs[key] = "Changed from " + item1 + " to " + item2;
         }
     }
 }
