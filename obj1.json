@@ -1,0 +1,11 @@
+{
+  "name": "Simon",
+  "surname": "Morgenstern",
+  "address": {
+    "street": "Ludwigsburgerstr",
+    "housenumber": 2,
+    "postalcode": 70173,
+    "town": "Stuttgart"
+  },
+  "age": 19
+}
