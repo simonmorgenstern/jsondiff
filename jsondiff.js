@@ -12,4 +12,19 @@ function printAllKeys(object) {
 }
 
 
-printAllKeys(object1);
+
+function compareObjects(obj1, obj2, diff){
+    for(key in obj1){
+        if(obj2.hasOwnProperty(key)){
+            if(typeof obj1[key] === "object"){
+                compareObjects(obj1[key], obj2[key]);
+            }else{
+                console.log("both objects have the " + key + " key");
+            }
+        }else{
+            console.log("second object is missing the " + key + "key");
+        }
+    }
+}
+
+compareObjects(object1, object2, {});
