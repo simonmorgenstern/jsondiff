@@ -2,19 +2,6 @@ const object1 = require('./obj1.json');
 const object2 = require('./obj2.json');
 const fs = require('fs');
 
-function printAllKeys(object) {
-    for (key in object) {
-        if (typeof object[key] === "object") {
-            console.log("------" + key + "------");
-            printAllKeys(object[key]);
-            console.log("------------------");
-
-        } else {
-            console.log(key + " -> " + object[key]);
-        }
-    }
-}
-
 function compareObjects(obj1, obj2) {
     const diffs = {};
     for (let key in obj1) {
@@ -46,8 +33,11 @@ function compare(item1, item2, key, diffs) {
     }
 }
 
+process.argv.forEach((val, index) => {
+    console.log(`${index}: ${val}`)
+})
+
 const d = compareObjects(object1, object2, {});
-printAllKeys(d);
 
 const data = JSON.stringify(d);
 fs.writeFile('difference.json', data, (err) => {
