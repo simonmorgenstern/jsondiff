@@ -1,12 +1,23 @@
-const object1 = require('./obj1.json');
-const object2 = require('./obj2.json');
+let object1;
+let object2;
 const fs = require('fs');
+const path = require('path');
 
-function compareObjects(base,newObject) {
+function printAllKeys(object) {
+    for (key in object) {
+        if (typeof object[key] === "object") {
+            printAllKeys(object[key]);
+        } else {
+            console.log(key);
+        }
+    }
+}
+
+function compareObjects(base, newObject) {
     const diffs = {};
     // calls the compare method for every key of the current level to get all changes and deleted keys
     for (let key in base) {
-        compare(base[key],newObject[key], key, diffs);
+        compare(base[key], newObject[key], key, diffs);
     }
     // iterates over the new object to check for added keys
     for (let key in newObject) {
@@ -38,7 +49,10 @@ function compare(item1, item2, key, diffs) {
     }
 }
 
-const d = compareObjects(object1, object2, {});
+const args = process.argv.slice(2);
+object1 = require(path.resolve(args[0]));
+object2 = require(path.resolve(args[1]));
+const d = compareObjects(object1, object2);
 
 const data = JSON.stringify(d);
 fs.writeFile('difference.json', data, (err) => {
