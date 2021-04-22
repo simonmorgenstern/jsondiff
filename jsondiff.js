@@ -1,33 +1,41 @@
 const object1 = require('./obj1.json');
 const object2 = require('./obj2.json');
+const fs = require('fs');
 
 function printAllKeys(object) {
     for (key in object) {
         if (typeof object[key] === "object") {
+            console.log("------" + key + "------");
             printAllKeys(object[key]);
+            console.log("------------------");
+
         } else {
-            console.log(key + object[key]);
+            console.log(key + " -> " + object[key]);
         }
     }
 }
 
-
 function compareObjects(obj1, obj2) {
-    var diffs = {};
+    const diffs = {};
     for (let key in obj1) {
         compare(obj1[key], obj2[key], key, diffs);
+    }
+    for (let key in obj2) {
+        if (!obj1[key]) {
+            diffs[key] = "added";
+        }
     }
     return diffs;
 }
 
 function compare(item1, item2, key, diffs) {
-    if(item2 === undefined){
-        diffs[key] = undefined;
+    if (item2 === undefined) {
+        diffs[key] = "deleted";
         return;
     }
     if (typeof item1 === "object") {
         const objDiff = compareObjects(item1, item2);
-        if(Object.keys(objDiff).length > 0){
+        if (Object.keys(objDiff).length > 0) {
             diffs[key] = objDiff;
         }
         return;
@@ -40,3 +48,11 @@ function compare(item1, item2, key, diffs) {
 
 const d = compareObjects(object1, object2, {});
 printAllKeys(d);
+
+const data = JSON.stringify(d);
+fs.writeFile('difference.json', data, (err) => {
+    if (err) {
+        throw err;
+    }
+    console.log("JSON data is saved.");
+});
