@@ -20,6 +20,9 @@ function compareObjects(obj1, obj2, diff){
                 compareObjects(obj1[key], obj2[key]);
             }else{
                 console.log("both objects have the " + key + " key");
+                if(obj1[key] !== obj2[key]){
+                    console.log("but the content has changed");
+                }
             }
         }else{
             console.log("second object is missing the " + key + "key");
