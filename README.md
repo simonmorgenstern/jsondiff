@@ -1,5 +1,5 @@
 # jsondiff
-## Compare two JSON Objects for differences
+## Compare two JSON Files for differences
 
 > Some parts of the code were inspired by https://gomakethings.com/getting-the-differences-between-two-objects-with-vanilla-js/
 and by https://gist.github.com/shawndumas/6194339
