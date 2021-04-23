@@ -3,15 +3,15 @@ let object2;
 const fs = require('fs');
 const path = require('path');
 
-function printAllKeys(object) {
-    for (key in object) {
-        if (typeof object[key] === "object") {
-            printAllKeys(object[key]);
-        } else {
-            console.log(key);
-        }
-    }
-}
+// function printAllKeys(object) {
+//     for (key in object) {
+//         if (typeof object[key] === "object") {
+//             printAllKeys(object[key]);
+//         } else {
+//             console.log(key);
+//         }
+//     }
+// }
 
 function compareObjects(base, newObject) {
     const diffs = {};
@@ -34,8 +34,8 @@ function compare(item1, item2, key, diffs) {
         diffs[key] = "deleted";
         return;
     }
-    // if the current item is a object it recursively tests the nested object for differences
-    if (typeof item1 === "object") {
+    // if the current item is a object it recursively tests the nested object(s) for differences
+    if (checkType(item1) === "object") {
         const objDiff = compareObjects(item1, item2);
         if (Object.keys(objDiff).length > 0) {
             diffs[key] = objDiff;
@@ -49,15 +49,30 @@ function compare(item1, item2, key, diffs) {
     }
 }
 
+// Will return the type of the object
+function checkType(obj){
+    var objTyp = Object
+        .prototype
+        .toString
+        .call(obj)
+        .replace('[object ', '')
+        .replace(']', '')
+        .toLowerCase();
+    return objTyp;
+}
+
+function writeDifferenceToJsonObject(object) {
+    const data = JSON.stringify(object);
+    fs.writeFile('difference.json', data, (err) => {
+        if (err) {
+            throw err;
+        }
+        console.log("JSON data is saved.");
+    });
+}
+
 const args = process.argv.slice(2);
 object1 = require(path.resolve(args[0]));
 object2 = require(path.resolve(args[1]));
 const d = compareObjects(object1, object2);
-
-const data = JSON.stringify(d);
-fs.writeFile('difference.json', data, (err) => {
-    if (err) {
-        throw err;
-    }
-    console.log("JSON data is saved.");
-});
+writeDifferenceToJsonObject(d);
