@@ -3,16 +3,6 @@ let object2;
 const fs = require('fs');
 const path = require('path');
 
-// function printAllKeys(object) {
-//     for (key in object) {
-//         if (typeof object[key] === "object") {
-//             printAllKeys(object[key]);
-//         } else {
-//             console.log(key);
-//         }
-//     }
-// }
-
 function compareObjects(base, newObject) {
     const diffs = {};
     // calls the compare method for every key of the current level to get all changes and deleted keys
@@ -31,8 +21,8 @@ function compareObjects(base, newObject) {
 function compare(item1, item2, key, diffs) {
     // if the key does not exist in the newObject it was deleted
     if (item2 === undefined) {
+        // search for item in other object
         diffs[key] = "deleted";
-        return;
     }
     // if the current item is a object it recursively tests the nested object(s) for differences
     if (checkType(item1) === "object") {
@@ -50,7 +40,7 @@ function compare(item1, item2, key, diffs) {
 }
 
 // Will return the type of the object
-function checkType(obj){
+function checkType(obj) {
     var objTyp = Object
         .prototype
         .toString
@@ -62,7 +52,13 @@ function checkType(obj){
 }
 
 function writeDifferenceToJsonObject(object) {
-    const data = JSON.stringify(object);
+    let data = JSON.stringify(object, null, "\t");
+    if (data === "{}") {
+        nothingChanged = {
+            "nothing": "has changed"
+        }
+        data = JSON.stringify(nothingChanged);
+    }
     fs.writeFile('difference.json', data, (err) => {
         if (err) {
             throw err;
@@ -71,8 +67,10 @@ function writeDifferenceToJsonObject(object) {
     });
 }
 
+// read in arguments from terminal
 const args = process.argv.slice(2);
 object1 = require(path.resolve(args[0]));
 object2 = require(path.resolve(args[1]));
+// start the comparison and safe differences to d
 const d = compareObjects(object1, object2);
 writeDifferenceToJsonObject(d);
